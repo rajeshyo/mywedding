@@ -429,6 +429,11 @@
                                     <button id="uploadBtn" class="btn" style="padding:10px 14px">Upload</button>
                                 </div>
                             </div>
++                           <!-- Cloudinary / external image URL: paste a Cloudinary image URL to add directly -->
++                          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
++                             <input id="cloudUrlInput" type="text" placeholder="Paste Cloudinary image URL" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
++                             <button id="addCloudBtn" class="btn" style="padding:8px 12px">Add</button>
++                          </div>
                         </div>
                     </div>
 
@@ -502,6 +507,22 @@
         const thumbsContainer = document.getElementById('thumbs');
         const bigImg = document.getElementById('bigImg');
 
+        const CLOUD_NAME = 'dcjctphwf';           // replace with your Cloudinary cloud name
+        const UPLOAD_PRESET = 'myweeding';   // replace with the unsigned upload preset name
+
+        
+        function addImageToGallery(url) {
+           if (!url) return;
+           const img = document.createElement('img');
+           img.src = url;
+           img.dataset.full = url;
+           img.classList.add('new-thumb');
+           img.tabIndex = 0;
+           thumbsContainer.appendChild(img);
+           setTimeout(()=>img.classList.remove('new-thumb'), 500);
+           img.click();
+       }
+
         thumbsContainer.addEventListener('click', (e) => {
             if (e.target.tagName !== 'IMG') return;
             const clicked = e.target;
@@ -542,37 +563,64 @@
             uploadFile(file);
         });
 
-        async function uploadFile(file) {
-            if (!file) return;
-            const fd = new FormData();
-            fd.append('photo', file);
-            uploadBtn.disabled = true;
-            showMsg('Uploading...');
-            try {
-                const res = await fetch('/upload', { method: 'POST', body: fd });
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({ error: 'Upload failed' }));
-                    throw new Error(err.error || 'Upload failed');
-                }
-                const data = await res.json();
-                const url = data.url;
-                const img = document.createElement('img');
-                img.src = url;
-                img.dataset.full = url;
-                img.classList.add('new-thumb');
-                thumbsContainer.appendChild(img);
-                setTimeout(() => img.classList.remove('new-thumb'), 500);
-                img.click();
-                showMsg('Upload complete — image available for download');
-                spawnHearts(8);
-            } catch (err) {
-                showMsg(err.message || 'Upload error');
-            } finally {
-                uploadBtn.disabled = false;
-                uploadInput.value = ''; // clear selection
-            }
-        }
+    
+async function uploadFile(file) {
+  if (!file) return;
+  uploadBtn.disabled = true;
+  showMsg('Uploading…');
 
+  try {
+    // use /image/upload endpoint
+    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', UPLOAD_PRESET);
+
+    const res = await fetch(url, { method: 'POST', body: fd });
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch (e) { data = { raw: text }; }
+
+    if (!res.ok) {
+      console.error('Cloudinary upload error', res.status, data);
+      // show actual Cloudinary message if available
+      const msg = (data.error && data.error.message) || (data.raw && String(data.raw)) || `Upload failed (${res.status})`;
+      throw new Error(msg);
+    }
+
+    console.log('Cloudinary upload success', data);
+    const imageUrl = data.secure_url || data.url;
+   // add uploaded Cloudinary image to gallery
+   addImageToGallery(imageUrl);
+            showMsg('Upload complete — image available for download');
+            spawnHearts(8);
+          } catch (err) {
+            console.error(err);
+            showMsg(err.message || 'Upload error');
+            alert('Upload error: ' + (err.message || 'see console'));
+          } finally {
+            uploadBtn.disabled = false;
+            uploadInput.value = '';
+          }
+        }
+       
+       // add Cloudinary/external URL button handler
+       const addCloudBtn = document.getElementById('addCloudBtn');
+       const cloudUrlInput = document.getElementById('cloudUrlInput');
+       if (addCloudBtn && cloudUrlInput) {
+         addCloudBtn.addEventListener('click', () => {
+           const url = (cloudUrlInput.value || '').trim();
+           if (!url) { showMsg('Paste a valid image URL'); return; }
+           // basic validation
+           if (!url.match(/\.(jpg|jpeg|png|webp|gif)(\?|$)/i) && !url.includes('res.cloudinary.com')) {
+             // still allow common Cloudinary URLs, otherwise warn
+             if (!confirm('URL does not look like an image. Add it anyway?')) return;
+           }
+           addImageToGallery(url);
+           cloudUrlInput.value = '';
+           showMsg('Image added');
+         });
+       }
         // hearts animation on celebrate/upload
         function spawnHearts(count = 6) {
             for (let i = 0; i < count; i++) {

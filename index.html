@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Rajesh & Rani — Wedding</title>
+    <style>
+        :root {
+            --accent: #A63F8F;
+            --accent-2: #FF6B9A;
+            --bg: #fff7fb;
+            --muted: #6b6b6b;
+            --card: #fff;
+            --glass: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Mobile-first base */
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        /* prevent page horizontal scroll caused by long thumbnail rows */
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(180deg, #fff7fb 0%, #fff 40%);
+            color: #222;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-bottom: 40px;
+            overflow-x: hidden;
+            /* <-- prevent horizontal page scroll */
+        }
+
+        header {
+            position: relative;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: linear-gradient(90deg, rgba(166, 63, 143, 0.08), rgba(255, 107, 154, 0.03));
+            border-bottom: 1px solid rgba(10, 10, 10, 0.03);
+            backdrop-filter: blur(4px);
+        }
+
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            background: radial-gradient(circle at 30% 30%, #fff9f9, #ffd6e9 30%, #f2c0e3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--accent);
+            box-shadow: 0 6px 18px rgba(166, 63, 143, 0.08);
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+            display: block;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 15px;
+            color: var(--accent);
+            line-height: 1
+        }
+
+        .sub {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .header-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 0;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(166, 63, 143, 0.12);
+            transition: transform .15s ease, box-shadow .15s ease, opacity .12s;
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .mute {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid rgba(166, 63, 143, 0.12);
+            padding: 6px 10px
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 16px auto;
+            padding: 0 16px
+        }
+
+        /* cards */
+        .card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 10px 30px rgba(9, 9, 10, 0.04)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px
+        }
+
+        @media(min-width:880px) {
+            .grid {
+                grid-template-columns: 1fr 340px
+            }
+        }
+
+        /* ensure grid children can shrink and not force overflow */
+        .grid>* {
+            min-width: 0;
+        }
+
+        /* Gallery */
+        .gallery-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .main-photo {
+            width: 100%;
+            height: 56vw;
+            max-height: 420px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0
+        }
+
+        .main-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            min-width: 0
+        }
+
+        .thumbs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            /* horizontal scrolling only */
+            overflow-y: hidden;
+            padding-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+
+        /* ensure thumbnail images don't force wider layout on small screens */
+        .thumbs img {
+            height: 64px;
+            width: auto;
+            /* keep natural aspect ratio */
+            max-width: none;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            flex: 0 0 auto;
+            transition: transform .18s ease, box-shadow .18s ease;
+            box-shadow: 0 6px 18px rgba(9, 9, 10, 0.04);
+            border: 3px solid transparent;
+            display: block;
+        }
+
+        .thumbs img.active {
+            transform: translateY(-6px);
+            border-color: var(--accent)
+        }
+
+        .thumbs::-webkit-scrollbar {
+            height: 8px
+        }
+
+        .thumbs::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius: 8px
+        }
+
+        /* Upload area */
+        .upload-area {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px dashed rgba(166, 63, 143, 0.12);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.4));
+            transition: border-color .12s, background .12s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .upload-area.dragover {
+            border-color: rgba(255, 107, 154, 0.9);
+            background: linear-gradient(180deg, rgba(255, 240, 247, 0.9), rgba(255, 255, 255, 0.6))
+        }
+
+        .upload-input {
+            display: none
+        }
+
+        .upload-label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: var(--muted)
+        }
+
+        /* Menu / details */
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #f2e9f2
+        }
+
+        .menu-item:last-child {
+            border-bottom: 0
+        }
+
+        /* confetti / hearts */
+        .hearts,
+        .confetti {
+            pointer-events: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            z-index: 999
+        }
+
+        .heart {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            transform: translate(-50%, -50%) scale(0);
+            animation: floatUp 2600ms cubic-bezier(.22, .9, .32, 1) forwards;
+            filter: drop-shadow(0 6px 14px rgba(166, 63, 143, .12));
+        }
+
+        .heart svg {
+            width: 100%;
+            height: 100%
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translate(-50%, 0) scale(0.1) rotate(0);
+                opacity: 0
+            }
+
+            10% {
+                opacity: 1;
+                scale: 1
+            }
+
+            100% {
+                transform: translate(-50%, -140vh) rotate(30deg) scale(.9);
+                opacity: 0
+            }
+        }
+
+        /* gentle pulse */
+        .pulse {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            mix-blend-mode: screen;
+            opacity: .12;
+            background: radial-gradient(circle at 20% 10%, rgba(255, 220, 236, .4), transparent 12%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* small love banner */
+        .love-banner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #fff3f8, #fff);
+            box-shadow: 0 6px 18px rgba(240, 120, 170, 0.06)
+        }
+
+        .love-banner .emoji {
+            font-size: 22px
+        }
+
+        .love-text {
+            font-weight: 700;
+            color: #b33a86
+        }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px
+        }
+
+        /* micro animation for thumbs on add */
+        .new-thumb {
+            animation: thumbPop .45s cubic-bezier(.2, .9, .2, 1)
+        }
+
+        @keyframes thumbPop {
+            0% {
+                transform: scale(.6);
+                opacity: 0
+            }
+
+            60% {
+                transform: scale(1.08)
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="brand">
+            <div class="logo" aria-hidden>R&R</div>
+            <div>
+                <h1>Rajesh & Rani — Wedding</h1>
+                <div class="sub">28 Nov • Karatia, Burdwan</div>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button id="playBtn" class="btn" title="Play sanai melody">Play Sanai</button>
+            <button id="stopBtn" class="mute" title="Stop music" style="display:none">Stop</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <main class="grid">
+            <section class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+                    <div style="display:flex;flex-direction:column">
+                        <div style="font-size:18px;font-weight:800;color:var(--accent)">Photos</div>
+                        <div style="font-size:13px;color:var(--muted);margin-top:4px">Capture the moment — upload and
+                            share with guests</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-size:13px;color:var(--muted)">Share this page link</div>
+                    </div>
+                </div>
+
+                <div class="gallery-wrap">
+                    <div class="main-photo card" id="mainPhotoContainer" style="position:relative;overflow:hidden">
+                        <img id="bigImg" src="/images/img/rajeshandrani.jpeg" alt="Wedding photo" />
+                        <div class="pulse"></div>
+                    </div>
+
+                    <div class="thumbs" id="thumbs" aria-label="thumbnails">
+                        <img src="/images/img/rajeshandrani.jpeg" data-full="/images/img/rajeshandrani.jpeg"
+                            class="active" alt="thumb" />
+                    </div>
+
+                    <div id="uploadArea" class="upload-area" role="region" aria-label="Upload area">
+                        <input id="uploadInput" class="upload-input" type="file" accept="image/*"
+                            capture="environment" />
+                        <div class="upload-label">
+                            <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+                                <div>
+                                    <div style="font-weight:700">Add a photo</div>
+                                    <div class="upload-hint">Tap to choose or drag & drop. Mobile camera capture
+                                        available.</div>
+                                </div>
+                                <div style="display:flex;gap:8px">
+                                    <button id="uploadBtn" class="btn" style="padding:10px 14px">Upload</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="uploadMsg" style="font-size:13px;color:var(--muted);margin-top:6px"></div>
+
+                    <div style="margin-top:10px" class="love-banner">
+                        <div class="emoji">🎶💐</div>
+                        <div>
+                            <div class="love-text">"Two hearts, one rhythm — celebrate love."</div>
+                            <div style="font-size:13px;color:var(--muted);margin-top:4px">Share your favorite moments —
+                                everyone can view & download.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                        <div style="font-size:16px;font-weight:800;color:var(--accent)">Wedding Menu</div>
+                        <div style="font-size:13px;color:var(--muted)">Delicacies for the day</div>
+                    </div>
+                </div>
+
+                <div id="menu" style="margin-top:12px">
+                    <div class="menu-item">
+                        <div class="name">Shorshe Ilish (Fish)</div>
+                        <div class="price">—</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="name">Mutton Kosha</div>
+                        <div class="price">—</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="name">Biryani</div>
+                        <div class="price">—</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="name">Paneer Lababdar</div>
+                        <div class="price">—</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="name">Mixed Vegetable</div>
+                        <div class="price">—</div>
+                    </div>
+                </div>
+
+                <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+                    Ceremony: 11:00 AM<br>
+                    Venue: Karatia, Burdwan<br>
+                    <a href="https://www.google.com/maps" target="_blank" rel="noreferrer"
+                        style="color:var(--accent);text-decoration:none">Open directions</a>
+                </div>
+
+                <div style="margin-top:12px">
+                    <button id="celebrateBtn" class="btn" style="width:100%">Celebrate 🎉</button>
+                </div>
+            </aside>
+        </main>
+
+        <footer style="max-width:980px;margin:6px auto">
+            <div style="font-size:13px;color:var(--muted)">Open this page to view and download photos — enjoy the day ❤️
+            </div>
+        </footer>
+    </div>
+
+    <div class="hearts" id="hearts"></div>
+
+    <script>
+        // gallery behavior
+        const thumbsContainer = document.getElementById('thumbs');
+        const bigImg = document.getElementById('bigImg');
+
+        thumbsContainer.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'IMG') return;
+            const clicked = e.target;
+            Array.from(thumbsContainer.querySelectorAll('img')).forEach(x => x.classList.remove('active'));
+            clicked.classList.add('active');
+            bigImg.src = clicked.dataset.full || clicked.src;
+        });
+
+        // upload logic + drag-drop
+        const uploadInput = document.getElementById('uploadInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadMsg = document.getElementById('uploadMsg');
+        const uploadArea = document.getElementById('uploadArea');
+        const hearts = document.getElementById('hearts');
+
+        function showMsg(txt, timeout = 3000) {
+            uploadMsg.textContent = txt;
+            if (timeout) clearTimeout(showMsg._t), showMsg._t = setTimeout(() => { uploadMsg.textContent = '' }, timeout);
+        }
+
+        uploadArea.addEventListener('click', () => uploadInput.click());
+        uploadInput.addEventListener('change', () => { /* file chosen */ });
+
+        // drag drop
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover') });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault(); uploadArea.classList.remove('dragover');
+            const f = e.dataTransfer.files && e.dataTransfer.files[0];
+            if (f) {
+                uploadFile(f);
+            }
+        });
+
+        uploadBtn.addEventListener('click', async () => {
+            const file = uploadInput.files && uploadInput.files[0];
+            if (!file) { showMsg('Choose a photo first'); return; }
+            uploadFile(file);
+        });
+
+        async function uploadFile(file) {
+            if (!file) return;
+            const fd = new FormData();
+            fd.append('photo', file);
+            uploadBtn.disabled = true;
+            showMsg('Uploading...');
+            try {
+                const res = await fetch('/upload', { method: 'POST', body: fd });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({ error: 'Upload failed' }));
+                    throw new Error(err.error || 'Upload failed');
+                }
+                const data = await res.json();
+                const url = data.url;
+                const img = document.createElement('img');
+                img.src = url;
+                img.dataset.full = url;
+                img.classList.add('new-thumb');
+                thumbsContainer.appendChild(img);
+                setTimeout(() => img.classList.remove('new-thumb'), 500);
+                img.click();
+                showMsg('Upload complete — image available for download');
+                spawnHearts(8);
+            } catch (err) {
+                showMsg(err.message || 'Upload error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadInput.value = ''; // clear selection
+            }
+        }
+
+        // hearts animation on celebrate/upload
+        function spawnHearts(count = 6) {
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'heart';
+                const size = 12 + Math.random() * 22;
+                el.style.width = size + 'px';
+                el.style.height = size + 'px';
+                el.style.left = (10 + Math.random() * 80) + '%';
+                el.style.top = (80 + Math.random() * 10) + '%';
+                el.style.animationDuration = (1800 + Math.random() * 1200) + 'ms';
+                el.style.opacity = 1;
+                el.innerHTML = `<svg viewBox="0 0 24 24" fill="${i % 2 ? '#ff84b0' : '#ff4d8a'}" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7-4.6-9.2-7.3C-1.6 9.1 4.5 4 8.2 6.4 10 7.8 12 10 12 10s2-2.2 3.8-3.6C19.5 4 25.6 9.1 21.2 13.7 19 16.4 12 21 12 21z"/></svg>`;
+                hearts.appendChild(el);
+                setTimeout(() => el.remove(), 3500);
+            }
+        }
+
+        document.getElementById('celebrateBtn').addEventListener('click', () => spawnHearts(18));
+
+        // simple "sanai" melody synth (WebAudio) - lightweight
+        let audioCtx, osc, gainNode, playing = false;
+        const melody = [440, 660, 880, 660, 440]; // simple pleasant sequence
+        document.getElementById('playBtn').addEventListener('click', async () => {
+            if (playing) return;
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            playing = true;
+            document.getElementById('playBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'inline-block';
+            gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0.0001;
+            gainNode.connect(audioCtx.destination);
+
+            // play short "sanai-like" arpeggio using oscillator + slight detune
+            for (let i = 0; i < 6 && playing; i++) {
+                for (let n = 0; n < melody.length && playing; n++) {
+                    if (!playing) break;
+                    osc = audioCtx.createOscillator();
+                    const o2 = audioCtx.createOscillator();
+                    osc.type = 'sawtooth';
+                    o2.type = 'square';
+                    osc.frequency.value = melody[n] * (1 + (Math.random() - .5) * 0.02);
+                    o2.frequency.value = melody[n] * 1.5;
+                    const g = audioCtx.createGain();
+                    g.gain.value = 0.0001;
+                    osc.connect(g); o2.connect(g); g.connect(gainNode);
+                    osc.start();
+                    o2.start();
+                    // envelope
+                    g.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + 0.02);
+                    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
+                    await wait(420);
+                    osc.stop(); o2.stop();
+                }
+                await wait(200);
+            }
+            playing = false;
+            document.getElementById('playBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            playing = false;
+            document.getElementById('playBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+        });
+
+        function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // small UX: prefetch existing images from /images (optional)
+        async function loadExisting() {
+            try {
+                // attempt to list few known files that may exist; this is best-effort
+                const sample = ['/images/photo1.jpg', '/images/photo2.jpg', '/images/photo3.jpg'];
+                for (const u of sample) {
+                    const res = await fetch(u, { method: 'HEAD' });
+                    if (res.ok) {
+                        const img = document.createElement('img');
+                        img.src = u; img.dataset.full = u;
+                        thumbsContainer.appendChild(img);
+                    }
+                }
+            } catch (e) { }
+        }
+        loadExisting();
+
+        // small accessibility: keyboard nav for thumbs
+        thumbsContainer.addEventListener('keydown', (e) => {
+            const focus = document.activeElement;
+            if (focus && focus.tagName === 'IMG') {
+                if (e.key === 'ArrowRight') focus.nextElementSibling && focus.nextElementSibling.focus();
+                if (e.key === 'ArrowLeft') focus.previousElementSibling && focus.previousElementSibling.focus();
+            }
+        });
+
+        // make newly added thumbs focusable
+        new MutationObserver((muts) => {
+            muts.forEach(m => {
+                m.addedNodes && m.addedNodes.forEach(node => {
+                    if (node.tagName === 'IMG') node.tabIndex = 0;
+                });
+            });
+        }).observe(thumbsContainer, { childList: true });
+
+    </script>
+</body>
+
+</html>

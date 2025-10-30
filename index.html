@@ -371,6 +371,36 @@
                 opacity: 1
             }
         }
+
+        button {
+            padding: 12px 20px;
+            background-color: #ff3366;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 24px;
+            animation: floatUp 3s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-200px) scale(1.5);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
@@ -381,14 +411,30 @@
             <div>
                 <h1>Rajesh & Rani — Wedding</h1>
                 <div class="sub">28 Nov • Karatia, Burdwan</div>
+                <div class="sub">
+                    <a href="https://maps.app.goo.gl/985dcFnAd3HYys53A" target="_blank" rel="noreferrer"
+                        style="color:var(--accent);text-decoration:none">Open directions</a>
+
+                </div>
+
+
             </div>
         </div>
 
         <div class="header-actions">
-            <button id="playBtn" class="btn" title="Play sanai melody">Play Sanai</button>
+            <button id="loveBtn" class="btn" title="Play sanai melody">Play Sanai</button>
             <button id="stopBtn" class="mute" title="Stop music" style="display:none">Stop</button>
         </div>
     </header>
+
+    <!-- <button id="loveBtn">Send Love & Play Song 🎵</button> -->
+
+    <!-- Background music -->
+    <audio id="bgMusic" loop>
+        <!-- ✅ Replace this link with your own song -->
+        <source src="images/song/bg.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
 
     <div class="container">
         <main class="grid">
@@ -400,24 +446,30 @@
                             share with guests</div>
                     </div>
                     <div style="text-align:right">
-                        <div style="font-size:13px;color:var(--muted)">Share this page link</div>
+                        <div style="font-size:13px;color:var(--muted)">
+                            <button id="copyBtn">📋</button>
+                        </div>
+                        <!-- <p id="link">https://rajeshandraniwedding.netlify.app</p> -->
+
+                        <p class="msg" id="msg">Link copied!</p>
                     </div>
                 </div>
 
                 <div class="gallery-wrap">
                     <div class="main-photo card" id="mainPhotoContainer" style="position:relative;overflow:hidden">
-                        <img id="bigImg" src="https://rajeshyo.github.io/mywedding/images/img/rajeshandrani.jpeg" alt="Wedding photo" />
+                        <img id="bigImg" src="https://rajeshyo.github.io/mywedding/images/img/rajeshandrani.jpeg"
+                            alt="Wedding photo" />
                         <div class="pulse"></div>
                     </div>
 
-                    <div class="thumbs" id="thumbs" aria-label="thumbnails">
+                    <!-- <div class="thumbs" id="thumbs" aria-label="thumbnails">
                         <img src="https://rajeshyo.github.io/mywedding/images/img/rajeshandrani.jpeg" data-full="https://rajeshyo.github.io/mywedding/images/img/rajeshandrani.jpeg"
                             class="active" alt="thumb" />
-                    </div>
+                    </div> -->
 
                     <div id="uploadArea" class="upload-area" role="region" aria-label="Upload area">
-                        <input id="uploadInput" class="upload-input" type="file" accept="image/*"
-                            capture="environment" />
+                        <!-- <input id="uploadInput" class="upload-input" type="file" accept="image/*" -->
+                        <!-- capture="environment" /> -->
                         <div class="upload-label">
                             <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
                                 <div>
@@ -426,14 +478,21 @@
                                         available.</div>
                                 </div>
                                 <div style="display:flex;gap:8px">
-                                    <button id="uploadBtn" class="btn" style="padding:10px 14px">Upload</button>
+                                    <!-- <button id="uploadBtn" class="btn" style="padding:10px 14px">Upload</button> -->
+
+                                    <button id="celebrateBtn" class="btn" style="width:100%">
+                                        <a href="https://drive.google.com/drive/u/0/folders/1y1M-oav5QlNlI8VIUXcIdUIeAdV-p94n"
+                                            style="text-decoration: none; color: #fff;" target="_blank">Upload Photos
+                                            🎉</a>
+                                    </button>
+
                                 </div>
                             </div>
-+                           <!-- Cloudinary / external image URL: paste a Cloudinary image URL to add directly -->
-+                          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
-+                             <input id="cloudUrlInput" type="text" placeholder="Paste Cloudinary image URL" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
-+                             <button id="addCloudBtn" class="btn" style="padding:8px 12px">Add</button>
-+                          </div>
+                            <!-- Cloudinary / external image URL: paste a Cloudinary image URL to add directly -->
+                            <!--                         <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+                            <input id="cloudUrlInput" type="text" placeholder="Paste Cloudinary image URL" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+                            <button id="addCloudBtn" class="btn" style="padding:8px 12px">Add</button>
+                         </div> -->
                         </div>
                     </div>
 
@@ -448,6 +507,43 @@
                         </div>
                     </div>
                 </div>
+                <!-- New: Couple card (two side-by-side person cards) + centered invitation mode -->
+                <div class="card" style="margin-top:12px;">
+                    <div class="couple-row" style="display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;">
+                        <!-- Person 1 -->
+                        <div class="person-card"
+                            style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:8px;">
+                            <img src="images/img/rajesh.jpeg" alt="Rajesh"
+                                style="width:100%;height:180px;object-fit:cover;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.06)" />
+                            <div style="font-weight:800;font-size:16px;color:var(--accent)">Rajesh Saha</div>
+                            <div style="font-size:13px;color:var(--muted)">Father: Mr. Debasis Saha</div>
+                            <div style="font-size:13px;color:var(--muted)">Mother: Mrs. Jyotsna Saha</div>
+                            <div style="font-size:13px;color:var(--muted)">Address: Karatia, Burdwan</div>
+                            <div style="font-size:13px;color:var(--muted)">PIN: 123452</div>
+                        </div>
+
+                        <!-- Person 2 -->
+                        <div class="person-card"
+                            style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:8px;">
+                            <img src="images/img/rani.jpeg" alt="Rani"
+                                style="width:100%;height:180px;object-fit:cover;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.06)" />
+                            <div style="font-weight:800;font-size:16px;color:var(--accent)">Rani Mallick</div>
+                            <div style="font-size:13px;color:var(--muted)">Father: Mr. Gora chand Mallick</div>
+                            <div style="font-size:13px;color:var(--muted)">Mother: Mrs. Purnima Mallick</div>
+                            <div style="font-size:13px;color:var(--muted)">Address: Gosala More, Purulia</div>
+                            <div style="font-size:13px;color:var(--muted)">PIN: 123456</div>
+                        </div>
+                    </div>
+
+                    <div class="mode-invite"
+                        style="margin-top:14px;text-align:center;padding:14px;border-radius:10px;background:linear-gradient(90deg, rgba(255,230,240,0.6), rgba(255,255,255,0.6));box-shadow:0 8px 24px rgba(166,63,143,0.06)">
+                        <div style="font-size:18px;font-weight:900;color:var(--accent)">You're Invited</div>
+                        <div style="font-size:15px;color:#b33a86;margin-top:6px">28 Nov — My Wedding</div>
+                        <div style="font-size:13px;color:var(--muted);margin-top:8px">Invitation for all guests — please
+                            join us to celebrate love and togetherness.</div>
+                    </div>
+                </div>
+
             </section>
 
             <aside class="card">
@@ -484,12 +580,13 @@
                 <div style="margin-top:12px;font-size:13px;color:var(--muted)">
                     Ceremony: 11:00 AM<br>
                     Venue: Karatia, Burdwan<br>
-                    <a href="https://www.google.com/maps" target="_blank" rel="noreferrer"
+                    <a href="https://maps.app.goo.gl/985dcFnAd3HYys53A" target="_blank" rel="noreferrer"
                         style="color:var(--accent);text-decoration:none">Open directions</a>
                 </div>
 
                 <div style="margin-top:12px">
-                    <button id="celebrateBtn" class="btn" style="width:100%">Celebrate 🎉</button>
+                    <button id="loveBtn" class="btn" style="width:100%">Celebrate ❤️ 🎉</button>
+                    <!-- <button >Send Love </button> -->
                 </div>
             </aside>
         </main>
@@ -510,18 +607,84 @@
         const CLOUD_NAME = 'dcjctphwf';           // replace with your Cloudinary cloud name
         const UPLOAD_PRESET = 'myweeding';   // replace with the unsigned upload preset name
 
-        
+        const loveBtn1 = document.getElementById('loveBtn');
+        const bgMusic = document.getElementById('bgMusic');
+
+        loveBtn1.addEventListener('click', () => {
+            // Start background music
+            bgMusic.play()
+                .then(() => console.log("Music started 🎵"))
+                .catch(err => console.log("Autoplay blocked:", err));
+
+            // Create hearts
+            for (let i = 0; i < 10; i++) {
+                createHeart();
+            }
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.textContent = '💖';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.bottom = '0px';
+            document.body.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 3000);
+        }
+
+        const copyBtn = document.getElementById('copyBtn');
+        const link = "https://drive.google.com/drive/u/0/folders/1y1M-oav5QlNlI8VIUXcIdUIeAdV-p94n"
+        const msg = document.getElementById('msg');
+
+        copyBtn.addEventListener('click', async () => {
+
+            try {
+
+                await navigator.clipboard.writeText(link);
+                msg.style.display = 'block';
+                setTimeout(() => msg.style.display = 'none', 1500);
+            } catch (err) {
+                alert('Failed to copy: ' + err);
+            }
+        });
+
+        loveBtn.addEventListener('click', () => {
+            for (let i = 0; i < 10; i++) { // number of hearts per click
+                createHeart();
+            }
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.textContent = '💖'; // you can change to 💕 ❤️ 💞 etc.
+
+            // random position around button
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.bottom = '0px';
+
+            document.body.appendChild(heart);
+
+            // remove after animation ends
+            setTimeout(() => {
+                heart.remove();
+            }, 3000);
+        }
+
+
+
         function addImageToGallery(url) {
-           if (!url) return;
-           const img = document.createElement('img');
-           img.src = url;
-           img.dataset.full = url;
-           img.classList.add('new-thumb');
-           img.tabIndex = 0;
-           thumbsContainer.appendChild(img);
-           setTimeout(()=>img.classList.remove('new-thumb'), 500);
-           img.click();
-       }
+            if (!url) return;
+            const img = document.createElement('img');
+            img.src = url;
+            img.dataset.full = url;
+            img.classList.add('new-thumb');
+            img.tabIndex = 0;
+            thumbsContainer.appendChild(img);
+            setTimeout(() => img.classList.remove('new-thumb'), 500);
+            img.click();
+        }
 
         thumbsContainer.addEventListener('click', (e) => {
             if (e.target.tagName !== 'IMG') return;
@@ -563,64 +726,64 @@
             uploadFile(file);
         });
 
-    
-async function uploadFile(file) {
-  if (!file) return;
-  uploadBtn.disabled = true;
-  showMsg('Uploading…');
 
-  try {
-    // use /image/upload endpoint
-    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-    const fd = new FormData();
-    fd.append('file', file);
-    fd.append('upload_preset', UPLOAD_PRESET);
+        async function uploadFile(file) {
+            if (!file) return;
+            uploadBtn.disabled = true;
+            showMsg('Uploading…');
 
-    const res = await fetch(url, { method: 'POST', body: fd });
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); } catch (e) { data = { raw: text }; }
+            try {
+                // use /image/upload endpoint
+                const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+                const fd = new FormData();
+                fd.append('file', file);
+                fd.append('upload_preset', UPLOAD_PRESET);
 
-    if (!res.ok) {
-      console.error('Cloudinary upload error', res.status, data);
-      // show actual Cloudinary message if available
-      const msg = (data.error && data.error.message) || (data.raw && String(data.raw)) || `Upload failed (${res.status})`;
-      throw new Error(msg);
-    }
+                const res = await fetch(url, { method: 'POST', body: fd });
+                const text = await res.text();
+                let data;
+                try { data = JSON.parse(text); } catch (e) { data = { raw: text }; }
 
-    console.log('Cloudinary upload success', data);
-    const imageUrl = data.secure_url || data.url;
-   // add uploaded Cloudinary image to gallery
-   addImageToGallery(imageUrl);
-            showMsg('Upload complete — image available for download');
-            spawnHearts(8);
-          } catch (err) {
-            console.error(err);
-            showMsg(err.message || 'Upload error');
-            alert('Upload error: ' + (err.message || 'see console'));
-          } finally {
-            uploadBtn.disabled = false;
-            uploadInput.value = '';
-          }
+                if (!res.ok) {
+                    console.error('Cloudinary upload error', res.status, data);
+                    // show actual Cloudinary message if available
+                    const msg = (data.error && data.error.message) || (data.raw && String(data.raw)) || `Upload failed (${res.status})`;
+                    throw new Error(msg);
+                }
+
+                console.log('Cloudinary upload success', data);
+                const imageUrl = data.secure_url || data.url;
+                // add uploaded Cloudinary image to gallery
+                addImageToGallery(imageUrl);
+                showMsg('Upload complete — image available for download');
+                spawnHearts(8);
+            } catch (err) {
+                console.error(err);
+                showMsg(err.message || 'Upload error');
+                alert('Upload error: ' + (err.message || 'see console'));
+            } finally {
+                uploadBtn.disabled = false;
+                uploadInput.value = '';
+            }
         }
-       
-       // add Cloudinary/external URL button handler
-       const addCloudBtn = document.getElementById('addCloudBtn');
-       const cloudUrlInput = document.getElementById('cloudUrlInput');
-       if (addCloudBtn && cloudUrlInput) {
-         addCloudBtn.addEventListener('click', () => {
-           const url = (cloudUrlInput.value || '').trim();
-           if (!url) { showMsg('Paste a valid image URL'); return; }
-           // basic validation
-           if (!url.match(/\.(jpg|jpeg|png|webp|gif)(\?|$)/i) && !url.includes('res.cloudinary.com')) {
-             // still allow common Cloudinary URLs, otherwise warn
-             if (!confirm('URL does not look like an image. Add it anyway?')) return;
-           }
-           addImageToGallery(url);
-           cloudUrlInput.value = '';
-           showMsg('Image added');
-         });
-       }
+
+        // add Cloudinary/external URL button handler
+        const addCloudBtn = document.getElementById('addCloudBtn');
+        const cloudUrlInput = document.getElementById('cloudUrlInput');
+        if (addCloudBtn && cloudUrlInput) {
+            addCloudBtn.addEventListener('click', () => {
+                const url = (cloudUrlInput.value || '').trim();
+                if (!url) { showMsg('Paste a valid image URL'); return; }
+                // basic validation
+                if (!url.match(/\.(jpg|jpeg|png|webp|gif)(\?|$)/i) && !url.includes('res.cloudinary.com')) {
+                    // still allow common Cloudinary URLs, otherwise warn
+                    if (!confirm('URL does not look like an image. Add it anyway?')) return;
+                }
+                addImageToGallery(url);
+                cloudUrlInput.value = '';
+                showMsg('Image added');
+            });
+        }
         // hearts animation on celebrate/upload
         function spawnHearts(count = 6) {
             for (let i = 0; i < count; i++) {
@@ -644,49 +807,7 @@ async function uploadFile(file) {
         // simple "sanai" melody synth (WebAudio) - lightweight
         let audioCtx, osc, gainNode, playing = false;
         const melody = [440, 660, 880, 660, 440]; // simple pleasant sequence
-        document.getElementById('playBtn').addEventListener('click', async () => {
-            if (playing) return;
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            playing = true;
-            document.getElementById('playBtn').style.display = 'none';
-            document.getElementById('stopBtn').style.display = 'inline-block';
-            gainNode = audioCtx.createGain();
-            gainNode.gain.value = 0.0001;
-            gainNode.connect(audioCtx.destination);
 
-            // play short "sanai-like" arpeggio using oscillator + slight detune
-            for (let i = 0; i < 6 && playing; i++) {
-                for (let n = 0; n < melody.length && playing; n++) {
-                    if (!playing) break;
-                    osc = audioCtx.createOscillator();
-                    const o2 = audioCtx.createOscillator();
-                    osc.type = 'sawtooth';
-                    o2.type = 'square';
-                    osc.frequency.value = melody[n] * (1 + (Math.random() - .5) * 0.02);
-                    o2.frequency.value = melody[n] * 1.5;
-                    const g = audioCtx.createGain();
-                    g.gain.value = 0.0001;
-                    osc.connect(g); o2.connect(g); g.connect(gainNode);
-                    osc.start();
-                    o2.start();
-                    // envelope
-                    g.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + 0.02);
-                    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
-                    await wait(420);
-                    osc.stop(); o2.stop();
-                }
-                await wait(200);
-            }
-            playing = false;
-            document.getElementById('playBtn').style.display = 'inline-block';
-            document.getElementById('stopBtn').style.display = 'none';
-        });
-
-        document.getElementById('stopBtn').addEventListener('click', () => {
-            playing = false;
-            document.getElementById('playBtn').style.display = 'inline-block';
-            document.getElementById('stopBtn').style.display = 'none';
-        });
 
         function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 

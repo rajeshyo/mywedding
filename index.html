@@ -430,7 +430,7 @@
     <!-- <button id="loveBtn">Send Love & Play Song 🎵</button> -->
 
     <!-- Background music -->
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic" loop autoplay muted playsinline>
         <!-- ✅ Replace this link with your own song -->
         <source src="images/song/bg.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -481,7 +481,7 @@
                                     <!-- <button id="uploadBtn" class="btn" style="padding:10px 14px">Upload</button> -->
 
                                     <button id="celebrateBtn" class="btn" style="width:100%">
-                                        <a href="https://drive.google.com/drive/folders/1J5G0zviy-EsFd89vr6YgPIIZFRkemiaU?usp=sharing"
+                                        <a href="https://drive.google.com/drive/u/0/folders/1y1M-oav5QlNlI8VIUXcIdUIeAdV-p94n"
                                             style="text-decoration: none; color: #fff;" target="_blank">Upload Photos
                                             🎉</a>
                                     </button>
@@ -590,11 +590,26 @@
                 </div>
             </aside>
         </main>
-
         <footer style="max-width:980px;margin:6px auto">
+            <div class="card" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px">
+                <div>
+                    <div style="font-size:15px;font-weight:800;color:var(--accent)">Contact</div>
+                    <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4">
+                        Kajal: <a href="tel:+916297507022" style="color:var(--accent);text-decoration:none">6297507022</a><br>
+                        Sajal: <a href="tel:+919732108729" style="color:var(--accent);text-decoration:none">9732108729</a><br>
+                        Sibas: <a href="tel:+916295535645" style="color:var(--accent);text-decoration:none">6295535645</a>
+
+                    </div>
+                </div>
+                <div style="font-size:13px;color:var(--muted);text-align:right">
+                    Need help? Call or message
+                </div>
+            </div>
+
             <div style="font-size:13px;color:var(--muted)">Open this page to view and download photos — enjoy the day ❤️
             </div>
         </footer>
+        
     </div>
 
     <div class="hearts" id="hearts"></div>
@@ -609,6 +624,24 @@
 
         const loveBtn1 = document.getElementById('loveBtn');
         const bgMusic = document.getElementById('bgMusic');
+
+        (function enableAudioAfterGesture() {
+            const onGesture = async () => {
+                try {
+                    bgMusic.muted = false;
+                    bgMusic.volume = 0.65;
+                    await bgMusic.play();
+                } catch (e) {
+                    // if unmute/play blocked, keep it muted; user can still press Play
+                    bgMusic.muted = true;
+                } finally {
+                    document.removeEventListener('click', onGesture);
+                    document.removeEventListener('touchstart', onGesture);
+                }
+            };
+            document.addEventListener('click', onGesture, { once: true });
+            document.addEventListener('touchstart', onGesture, { once: true });
+        })();
 
         loveBtn1.addEventListener('click', () => {
             // Start background music
@@ -634,7 +667,7 @@
         }
 
         const copyBtn = document.getElementById('copyBtn');
-        const link = "https://drive.google.com/drive/folders/1J5G0zviy-EsFd89vr6YgPIIZFRkemiaU?usp=sharing"
+        const link = "https://drive.google.com/drive/u/0/folders/1y1M-oav5QlNlI8VIUXcIdUIeAdV-p94n"
         const msg = document.getElementById('msg');
 
         copyBtn.addEventListener('click', async () => {
